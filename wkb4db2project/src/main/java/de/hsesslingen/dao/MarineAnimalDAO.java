@@ -50,5 +50,5 @@ public class MarineAnimalDAO {
     } catch (SQLException e) {
         e.printStackTrace();
     }
-}
+  }
 }

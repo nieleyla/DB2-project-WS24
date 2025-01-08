@@ -6,7 +6,7 @@ import de.hsesslingen.dao.CoralDAO;
 import de.hsesslingen.model.Coral;
 
 public class CoralService {
-    private CoralDAO coralDAO = new CoralDAO();
+    private final CoralDAO coralDAO = new CoralDAO();
 
     public List<Coral> getAllCorals() {
         return coralDAO.getAllCorals();

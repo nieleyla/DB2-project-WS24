@@ -6,7 +6,7 @@ import de.hsesslingen.dao.MarineAnimalDAO;
 import de.hsesslingen.model.MarineAnimal;
 
 public class MarineAnimalService {
-    private MarineAnimalDAO marineAnimalDAO = new MarineAnimalDAO();
+    private final MarineAnimalDAO marineAnimalDAO = new MarineAnimalDAO();
 
     public List<MarineAnimal> getAllMarineAnimals() {
         return marineAnimalDAO.getAllMarineAnimals();
