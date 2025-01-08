@@ -1,20 +1,36 @@
 package de.hsesslingen.gui;
 
-import de.hsesslingen.service.CoralService;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.util.List;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
+
+import de.hsesslingen.model.Coral;
+import de.hsesslingen.service.CoralService;
 
 public class CoralPanel extends JPanel {
     private CoralService coralService = new CoralService();
+    private final JTable table;
+    private final DefaultTableModel tableModel;
 
     public CoralPanel() {
         setLayout(new BorderLayout());
 
-        // Tabelle für Corals
+        // Tabelle erstellen
         String[] columns = {"ID", "Name", "Region", "Recovery Status"};
-        JTable table = new JTable(new Object[][]{}, columns);
+        tableModel = new DefaultTableModel(columns, 0);
+        table = new JTable(tableModel);
         JScrollPane tableScrollPane = new JScrollPane(table);
+
+        // Daten aus der DB laden
+        loadCorals();
 
         // Formular für neue Einträge
         JPanel formPanel = new JPanel(new GridLayout(4, 2, 5, 5));
@@ -32,14 +48,19 @@ public class CoralPanel extends JPanel {
         formPanel.add(new JLabel(""));
         formPanel.add(addButton);
 
-        // Add action listener
+        // Hinzufügen-Button Aktion
         addButton.addActionListener(e -> {
             String name = nameField.getText();
             String region = regionField.getText();
             String recoveryStatus = recoveryField.getText();
 
+            // Neuen Eintrag in die DB einfügen
             coralService.addNewCoral(name, region, recoveryStatus);
-            JOptionPane.showMessageDialog(this, "Coral added successfully!");
+
+            // Tabelle aktualisieren
+            loadCorals();
+
+            // Felder leeren
             nameField.setText("");
             regionField.setText("");
             recoveryField.setText("");
@@ -47,5 +68,21 @@ public class CoralPanel extends JPanel {
 
         add(tableScrollPane, BorderLayout.CENTER);
         add(formPanel, BorderLayout.SOUTH);
+    }
+
+    private void loadCorals() {
+        // Daten aus der DB laden
+        List<Coral> corals = coralService.getAllCorals();
+
+        // Tabelle leeren und neu befüllen
+        tableModel.setRowCount(0);
+        for (Coral coral : corals) {
+            tableModel.addRow(new Object[]{
+                    coral.getId(),
+                    coral.getName(),
+                    coral.getRegion(),
+                    coral.getRecoveryStatus()
+            });
+        }
     }
 }

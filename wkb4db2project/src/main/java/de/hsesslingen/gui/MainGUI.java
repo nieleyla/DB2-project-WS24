@@ -1,9 +1,6 @@
 package de.hsesslingen.gui;
 
-import java.awt.BorderLayout;
-
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 
@@ -12,18 +9,12 @@ public class MainGUI extends JFrame {
         setTitle("Marine Database Manager");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new BorderLayout());
-
-        // Tabs hinzufügen
         JTabbedPane tabbedPane = new JTabbedPane();
+
         tabbedPane.addTab("Marine Animals", new MarineAnimalPanel());
         tabbedPane.addTab("Corals", new CoralPanel());
-        add(tabbedPane, BorderLayout.CENTER);
 
-        // Statusleiste
-        JLabel statusLabel = new JLabel("Ready");
-        add(statusLabel, BorderLayout.SOUTH);
-
+        add(tabbedPane);
         setVisible(true);
     }
 
@@ -31,4 +22,3 @@ public class MainGUI extends JFrame {
         SwingUtilities.invokeLater(MainGUI::new);
     }
 }
-

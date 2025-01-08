@@ -7,7 +7,7 @@ public class MarineAnimal {
     private int size;
     private String conservationStatus;
 
-    public MarineAnimal(int id, String art, String lebensraum, int groesse, String schutzstatus) {
+    public MarineAnimal(int id, String species, String habitat, int size, String conservationStatus) {
         this.id = id;
         this.species = species;
         this.habitat = habitat;

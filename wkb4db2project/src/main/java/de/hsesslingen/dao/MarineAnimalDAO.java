@@ -1,7 +1,7 @@
 package de.hsesslingen.dao;
 
-import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -13,12 +13,14 @@ import de.hsesslingen.model.MarineAnimal;
 
 public class MarineAnimalDAO {
 
-    // List all MarineAnimals
+    // List all Marine Animals
     public List<MarineAnimal> getAllMarineAnimals() {
         List<MarineAnimal> marineAnimals = new ArrayList<>();
+        String query = "SELECT * FROM dbo.leniit01_MarineAnimals";
+
         try (Connection connection = DatabaseConnection.getConnection();
-             Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM leniit01_MarineAnimals")) {
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query)) {
             while (rs.next()) {
                 marineAnimals.add(new MarineAnimal(
                     rs.getInt("ID"),
@@ -26,25 +28,27 @@ public class MarineAnimalDAO {
                     rs.getString("Habitat"),
                     rs.getInt("Size"),
                     rs.getString("ConservationStatus")
-                ));
-            }
+                 ));
+        }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return marineAnimals;
     }
 
-    // Add a new MarineAnimal
-    public void addMarineAnimal(String species, String habitat, int size, String conservationStatus) {
-        try (Connection connection = DatabaseConnection.getConnection();
-            CallableStatement stmt = connection.prepareCall("{call leniit01_AddMarineAnimal(?, ?, ?, ?)}")) {
-            stmt.setString(1, species);
-            stmt.setString(2, habitat);
-            stmt.setInt(3, size);
-            stmt.setString(4, conservationStatus);
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+   // Add a new MarineAnimal
+   public void addMarineAnimal(String species, String habitat, int size, String conservationStatus) {
+    String query = "INSERT INTO dbo.leniit01_MarineAnimals (Species, Habitat, Size, ConservationStatus) VALUES (?, ?, ?, ?)";
+
+    try (Connection connection = DatabaseConnection.getConnection();
+         PreparedStatement pstmt = connection.prepareStatement(query)) {
+        pstmt.setString(1, species); // Insert species into Species column
+        pstmt.setString(2, habitat); // Insert habitat into Habitat column
+        pstmt.setInt(3, size); // Insert size into Size column
+        pstmt.setString(4, conservationStatus); // Insert conservationStatus into ConservationStatus column
+        pstmt.executeUpdate();
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+}
 }

@@ -8,11 +8,8 @@ import de.hsesslingen.model.Coral;
 public class CoralService {
     private CoralDAO coralDAO = new CoralDAO();
 
-    public void printAllCorals() {
-        List<Coral> corals = coralDAO.getAllCorals();
-        for (Coral coral : corals) {
-            System.out.println("Name: " + coral.getName() + ", Region: " + coral.getRegion());
-        }
+    public List<Coral> getAllCorals() {
+        return coralDAO.getAllCorals();
     }
 
     public void addNewCoral(String name, String region, String recoveryStatus) {
