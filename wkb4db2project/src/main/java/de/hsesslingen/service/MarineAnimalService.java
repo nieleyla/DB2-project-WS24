@@ -14,4 +14,9 @@ public class MarineAnimalService {
             System.out.println("Species: " + animal.getSpecies() + ", Habitat: " + animal.getHabitat());
         }
     }
+
+    public void addNewMarineAnimal(String species, String habitat, int size, String conservationStatus) {
+        marineAnimalDAO.addMarineAnimal(species, habitat, size, conservationStatus);
+        System.out.println("Marine animal added successfully: " + species);
+    }
 }

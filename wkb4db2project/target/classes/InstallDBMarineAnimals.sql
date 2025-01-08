@@ -40,7 +40,7 @@ DROP TRIGGER IF EXISTS dbo.leniit01_UpdateLastModified;
 GO
 
 CREATE TRIGGER dbo.leniit01_UpdateLastModified
-ON dbo.MarineAnimals
+ON dbo.leniit01_MarineAnimals
 AFTER INSERT, UPDATE
 AS
 BEGIN

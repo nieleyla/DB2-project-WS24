@@ -12,6 +12,8 @@ import de.hsesslingen.connection.DatabaseConnection;
 import de.hsesslingen.model.MarineAnimal;
 
 public class MarineAnimalDAO {
+
+    // List all MarineAnimals
     public List<MarineAnimal> getAllMarineAnimals() {
         List<MarineAnimal> marineAnimals = new ArrayList<>();
         try (Connection connection = DatabaseConnection.getConnection();
@@ -32,6 +34,7 @@ public class MarineAnimalDAO {
         return marineAnimals;
     }
 
+    // Add a new MarineAnimal
     public void addMarineAnimal(String species, String habitat, int size, String conservationStatus) {
         try (Connection connection = DatabaseConnection.getConnection();
             CallableStatement stmt = connection.prepareCall("{call leniit01_AddMarineAnimal(?, ?, ?, ?)}")) {

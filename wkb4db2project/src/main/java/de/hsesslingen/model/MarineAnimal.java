@@ -15,7 +15,7 @@ public class MarineAnimal {
         this.conservationStatus = conservationStatus;
     }
 
-    // Getter und Setter
+    // Getter and Setter
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
