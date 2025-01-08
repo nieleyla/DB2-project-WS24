@@ -1,5 +1,6 @@
 package de.hsesslingen.dao;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,7 +16,7 @@ public class MarineAnimalDAO {
         List<MarineAnimal> marineAnimals = new ArrayList<>();
         try (Connection connection = DatabaseConnection.getConnection();
              Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM MarineAnimals")) {
+             ResultSet rs = stmt.executeQuery("SELECT * FROM leniit01_MarineAnimals")) {
             while (rs.next()) {
                 marineAnimals.add(new MarineAnimal(
                     rs.getInt("ID"),
@@ -29,5 +30,18 @@ public class MarineAnimalDAO {
             e.printStackTrace();
         }
         return marineAnimals;
+    }
+
+    public void addMarineAnimal(String species, String habitat, int size, String conservationStatus) {
+        try (Connection connection = DatabaseConnection.getConnection();
+            CallableStatement stmt = connection.prepareCall("{call leniit01_AddMarineAnimal(?, ?, ?, ?)}")) {
+            stmt.setString(1, species);
+            stmt.setString(2, habitat);
+            stmt.setInt(3, size);
+            stmt.setString(4, conservationStatus);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
