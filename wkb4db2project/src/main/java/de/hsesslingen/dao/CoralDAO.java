@@ -50,5 +50,34 @@ public class CoralDAO {
             e.printStackTrace();
         }
     }
+
+    // Update a Coral
+    public void updateCoral(int id, String name, String region, String recoveryStatus) {
+        String query = "UPDATE dbo.leniit01_Corals SET Name = ?, Region = ?, RecoveryStatus = ? WHERE ID = ?";
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setString(1, name);
+            pstmt.setString(2, region);
+            pstmt.setString(3, recoveryStatus);
+            pstmt.setInt(4, id);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Delete a Coral
+    public void deleteCoral(int id) {
+        String query = "DELETE FROM dbo.leniit01_Corals WHERE ID = ?";
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, id);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
 

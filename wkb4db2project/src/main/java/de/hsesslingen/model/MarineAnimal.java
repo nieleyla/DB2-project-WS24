@@ -7,6 +7,7 @@ public class MarineAnimal {
     private int size;
     private String conservationStatus;
 
+    // Constructors
     public MarineAnimal(int id, String species, String habitat, int size, String conservationStatus) {
         this.id = id;
         this.species = species;
@@ -15,7 +16,7 @@ public class MarineAnimal {
         this.conservationStatus = conservationStatus;
     }
 
-    // Getter and Setter
+    // Getters and Setters
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 

@@ -34,10 +34,9 @@ public class CoralPanel extends JPanel {
         tableModel = new DefaultTableModel(columns, 0);
         table = new JTable(tableModel);
         table.setAutoCreateRowSorter(true); // Enable sorting
-        JScrollPane tableScrollPane = new JScrollPane(table);
+        JScrollPane tableScrollPane = new JScrollPane(table); // Add scroll bar
         tablePanel.add(tableScrollPane, BorderLayout.CENTER);
 
-        // Load data
         loadCorals();
 
         // Search and form panel
@@ -45,27 +44,33 @@ public class CoralPanel extends JPanel {
         searchFormPanel.add(createSearchPanel(), BorderLayout.NORTH);
         searchFormPanel.add(createFormPanel(), BorderLayout.CENTER);
 
+        // Add panels to main panel
         add(tablePanel, BorderLayout.CENTER);
         add(searchFormPanel, BorderLayout.SOUTH);
     }
 
+    // Search panel
     private JPanel createSearchPanel() {
-        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); // Layout: Left align
         searchPanel.setBorder(new TitledBorder("Search Corals"));
 
         JLabel searchLabel = new JLabel("Search:");
         JTextField searchField = new JTextField(15);
         JButton searchButton = new JButton("Search");
 
+        // Search button action
         searchButton.addActionListener(e -> {
-            String searchTerm = searchField.getText().toLowerCase();
+            String searchTerm = searchField.getText().toLowerCase(); // Case insensitive search
+            // Filter corals based on search term
             List<Coral> filteredCorals = coralService.getAllCorals().stream()
                 .filter(coral -> coral.getName().toLowerCase().contains(searchTerm) ||
                                  coral.getRegion().toLowerCase().contains(searchTerm) ||
                                  coral.getRecoveryStatus().toLowerCase().contains(searchTerm))
                 .toList();
 
+            // Update table
             tableModel.setRowCount(0);
+            // Add filtered corals to table
             for (Coral coral : filteredCorals) {
                 tableModel.addRow(new Object[]{
                     coral.getId(),
@@ -76,49 +81,70 @@ public class CoralPanel extends JPanel {
             }
         });
 
+        // Add components to search panel
         searchPanel.add(searchLabel);
         searchPanel.add(searchField);
         searchPanel.add(searchButton);
         return searchPanel;
     }
 
+    // Form panel
     private JPanel createFormPanel() {
-        JPanel formPanel = new JPanel(new GridBagLayout());
-        formPanel.setBorder(new TitledBorder("Add New Coral"));
+        JPanel formPanel = new JPanel(new GridBagLayout()); // Layout: Grid
+        formPanel.setBorder(new TitledBorder("Manage Corals"));
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.insets = new Insets(5, 5, 5, 5); // Padding
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
+        // Form fields
+        JLabel idLabel = new JLabel("ID:");
+        JTextField idField = new JTextField(10);
         JLabel nameLabel = new JLabel("Name:");
         JTextField nameField = new JTextField(15);
         JLabel regionLabel = new JLabel("Region:");
         JTextField regionField = new JTextField(15);
         JLabel recoveryLabel = new JLabel("Recovery Status:");
         JTextField recoveryField = new JTextField(15);
+        
+        // Buttons
         JButton addButton = new JButton("Add Coral");
+        JButton updateButton = new JButton("Update Coral");
+        JButton deleteButton = new JButton("Delete Coral");
 
+        // Layout
         gbc.gridx = 0;
         gbc.gridy = 0;
+        formPanel.add(idLabel, gbc);
+        gbc.gridx = 1;
+        formPanel.add(idField, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 1;
         formPanel.add(nameLabel, gbc);
         gbc.gridx = 1;
         formPanel.add(nameField, gbc);
 
         gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridy = 2;
         formPanel.add(regionLabel, gbc);
         gbc.gridx = 1;
         formPanel.add(regionField, gbc);
 
         gbc.gridx = 0;
-        gbc.gridy = 2;
+        gbc.gridy = 3;
         formPanel.add(recoveryLabel, gbc);
         gbc.gridx = 1;
         formPanel.add(recoveryField, gbc);
 
         gbc.gridx = 1;
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         formPanel.add(addButton, gbc);
+        gbc.gridy = 5;
+        formPanel.add(updateButton, gbc);
+        gbc.gridy = 6;
+        formPanel.add(deleteButton, gbc);
 
+        // Add button action
         addButton.addActionListener(e -> {
             String name = nameField.getText();
             String region = regionField.getText();
@@ -133,9 +159,38 @@ public class CoralPanel extends JPanel {
             recoveryField.setText("");
         });
 
+        // Update Button Action
+        updateButton.addActionListener(e -> {
+            int id = Integer.parseInt(idField.getText());
+            String name = nameField.getText();
+            String region = regionField.getText();
+            String recoveryStatus = recoveryField.getText();
+
+            coralService.updateCoral(id, name, region, recoveryStatus);
+            
+            loadCorals();
+
+            idField.setText("");
+            nameField.setText("");
+            regionField.setText("");
+            recoveryField.setText("");
+        });
+
+        // Delete Button Action
+        deleteButton.addActionListener(e -> {
+            int id = Integer.parseInt(idField.getText());
+
+            coralService.deleteCoral(id);
+            
+            loadCorals();
+
+            idField.setText("");
+        });
+
         return formPanel;
     }
 
+    // Load all corals
     private void loadCorals() {
         List<Coral> corals = coralService.getAllCorals();
         tableModel.setRowCount(0);

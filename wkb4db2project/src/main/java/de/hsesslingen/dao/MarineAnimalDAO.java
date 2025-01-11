@@ -48,7 +48,36 @@ public class MarineAnimalDAO {
         pstmt.setString(4, conservationStatus); // Insert conservationStatus into ConservationStatus column
         pstmt.executeUpdate();
     } catch (SQLException e) {
-        e.printStackTrace();
+        e.printStackTrace();}
     }
-  }
+
+    // Update a MarineAnimal
+    public void updateMarineAnimal(int id, String species, String habitat, int size, String conservationStatus) {
+        String query = "UPDATE dbo.leniit01_MarineAnimals SET Species = ?, Habitat = ?, Size = ?, ConservationStatus = ? WHERE ID = ?";
+    
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setString(1, species);
+            pstmt.setString(2, habitat);
+            pstmt.setInt(3, size);
+            pstmt.setString(4, conservationStatus);
+            pstmt.setInt(5, id);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    // Delete a MarineAnimal
+    public void deleteMarineAnimal(int id) {
+        String query = "DELETE FROM dbo.leniit01_MarineAnimals WHERE ID = ?";
+    
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, id);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }    
 }

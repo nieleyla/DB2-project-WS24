@@ -9,6 +9,7 @@ public class Coral {
     private String recoveryStatus;
     private LocalDateTime lastModified;
 
+    // Constructors
     public Coral(int id, String name, String region, String recoveryStatus, LocalDateTime lastModified) {
         this.id = id;
         this.name = name;
@@ -17,7 +18,7 @@ public class Coral {
         this.lastModified = lastModified;
     }
 
-    // Getter and Setter
+    // Getters and Setters
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 

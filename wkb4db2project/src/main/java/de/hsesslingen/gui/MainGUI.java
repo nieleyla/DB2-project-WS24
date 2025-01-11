@@ -9,7 +9,7 @@ public class MainGUI extends JFrame {
     public MainGUI() {
         setTitle("Marine Database Manager");
         setSize(1000, 700);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Exit application when the window is closed
         setLocationRelativeTo(null);
 
         // Set Look and Feel
@@ -24,6 +24,7 @@ public class MainGUI extends JFrame {
         tabbedPane.addTab("Marine Animals", new MarineAnimalPanel());
         tabbedPane.addTab("Corals", new CoralPanel());
 
+        // Add tabbed pane to the frame
         add(tabbedPane);
         setVisible(true);
     }

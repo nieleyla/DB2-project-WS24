@@ -9,7 +9,7 @@ public class Main {
     public static void main(String[] args) {
         CoralDAO coralDAO = new CoralDAO();
     
-        // Beispiel: Neue Koralle hinzufügen
+    
         coralDAO.addCoral("Lettuce Coral", "Pacific Ocean", "Endangered");
     
         // Beispiel: Alle Korallen abrufen
