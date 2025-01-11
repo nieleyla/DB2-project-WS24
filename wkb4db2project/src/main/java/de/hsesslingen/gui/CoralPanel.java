@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -18,9 +19,11 @@ import javax.swing.table.DefaultTableModel;
 
 import de.hsesslingen.model.Coral;
 import de.hsesslingen.service.CoralService;
+import de.hsesslingen.service.WikipediaService;
 
 public class CoralPanel extends JPanel {
-    private CoralService coralService = new CoralService();
+    private final CoralService coralService = new CoralService();
+    private final WikipediaService wikipediaService = new WikipediaService();
     private final JTable table;
     private final DefaultTableModel tableModel;
 
@@ -37,6 +40,35 @@ public class CoralPanel extends JPanel {
         JScrollPane tableScrollPane = new JScrollPane(table); // Add scroll bar
         tablePanel.add(tableScrollPane, BorderLayout.CENTER);
 
+        // Wikipedia button
+        JButton wikipediaButton = new JButton("Open Wikipedia Article");
+        wikipediaButton.addActionListener(e -> {
+            int selectedRow = table.getSelectedRow();
+            if (selectedRow >= 0) {
+                String name = table.getValueAt(selectedRow, 1).toString(); // Spalte für 'Name'
+                String articleUrl = wikipediaService.getWikipediaArticle(name);
+
+                if (articleUrl != null) {
+                    try {
+                        java.awt.Desktop.getDesktop().browse(new java.net.URI(articleUrl));
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(this, "Could not open Wikipedia article.", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "No Wikipedia article found for: " + name, "Not Found", JOptionPane.INFORMATION_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Please select a coral first.", "Warning", JOptionPane.WARNING_MESSAGE);
+            }
+        });
+
+        // Button panel directly below the table
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        buttonPanel.add(wikipediaButton);
+        tablePanel.add(buttonPanel, BorderLayout.SOUTH);
+
+        // Load data
         loadCorals();
 
         // Search and form panel
@@ -70,7 +102,6 @@ public class CoralPanel extends JPanel {
 
             // Update table
             tableModel.setRowCount(0);
-            // Add filtered corals to table
             for (Coral coral : filteredCorals) {
                 tableModel.addRow(new Object[]{
                     coral.getId(),
@@ -105,7 +136,7 @@ public class CoralPanel extends JPanel {
         JTextField regionField = new JTextField(15);
         JLabel recoveryLabel = new JLabel("Recovery Status:");
         JTextField recoveryField = new JTextField(15);
-        
+
         // Buttons
         JButton addButton = new JButton("Add Coral");
         JButton updateButton = new JButton("Update Coral");
@@ -167,7 +198,7 @@ public class CoralPanel extends JPanel {
             String recoveryStatus = recoveryField.getText();
 
             coralService.updateCoral(id, name, region, recoveryStatus);
-            
+
             loadCorals();
 
             idField.setText("");
@@ -181,7 +212,7 @@ public class CoralPanel extends JPanel {
             int id = Integer.parseInt(idField.getText());
 
             coralService.deleteCoral(id);
-            
+
             loadCorals();
 
             idField.setText("");

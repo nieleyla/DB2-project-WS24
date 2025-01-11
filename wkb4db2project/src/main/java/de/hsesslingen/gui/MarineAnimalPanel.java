@@ -1,6 +1,5 @@
 package de.hsesslingen.gui;
 
-
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -20,9 +19,11 @@ import javax.swing.table.DefaultTableModel;
 
 import de.hsesslingen.model.MarineAnimal;
 import de.hsesslingen.service.MarineAnimalService;
+import de.hsesslingen.service.WikipediaService;
 
 public class MarineAnimalPanel extends JPanel {
-    private MarineAnimalService marineAnimalService = new MarineAnimalService();
+    private final MarineAnimalService marineAnimalService = new MarineAnimalService();
+    private final WikipediaService wikipediaService = new WikipediaService();
     private final JTable table;
     private final DefaultTableModel tableModel;
 
@@ -38,6 +39,34 @@ public class MarineAnimalPanel extends JPanel {
         table.setAutoCreateRowSorter(true); // Enable sorting
         JScrollPane tableScrollPane = new JScrollPane(table); // Add scroll bar
         tablePanel.add(tableScrollPane, BorderLayout.CENTER);
+
+        // Wikipedia button
+        JButton wikipediaButton = new JButton("Open Wikipedia Article");
+        wikipediaButton.addActionListener(e -> {
+            int selectedRow = table.getSelectedRow();
+            if (selectedRow >= 0) {
+                String species = table.getValueAt(selectedRow, 1).toString(); // Spalte für 'Species'
+                String articleUrl = wikipediaService.getWikipediaArticle(species);
+
+                if (articleUrl != null) {
+                    try {
+                        java.awt.Desktop.getDesktop().browse(new java.net.URI(articleUrl));
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(this, "Could not open Wikipedia article.", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "No Wikipedia article found for: " + species, "Not Found", JOptionPane.INFORMATION_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Please select a marine animal first.", "Warning", JOptionPane.WARNING_MESSAGE);
+            }
+        });
+
+        // Button panel below the table
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        buttonPanel.add(wikipediaButton);
+        tablePanel.add(buttonPanel, BorderLayout.SOUTH);
 
         // Load data
         loadMarineAnimals();
@@ -93,7 +122,7 @@ public class MarineAnimalPanel extends JPanel {
     // Form panel
     private JPanel createFormPanel() {
         JPanel formPanel = new JPanel(new GridBagLayout());
-        formPanel.setBorder(new TitledBorder("Add New Marine Animal"));
+        formPanel.setBorder(new TitledBorder("Add / Edit / Delete Marine Animal"));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -109,13 +138,13 @@ public class MarineAnimalPanel extends JPanel {
         JTextField sizeField = new JTextField(15);
         JLabel conservationLabel = new JLabel("Conservation Status:");
         JTextField conservationField = new JTextField(15);
-        
+
         // Buttons
         JButton addButton = new JButton("Add Marine Animal");
         JButton updateButton = new JButton("Update Marine Animal");
         JButton deleteButton = new JButton("Delete Marine Animal");
 
-        // Layout
+        // Add components to form
         gbc.gridx = 0;
         gbc.gridy = 0;
         formPanel.add(idLabel, gbc);
@@ -223,6 +252,29 @@ public class MarineAnimalPanel extends JPanel {
             loadMarineAnimals();
 
             idField.setText("");
+        });
+
+        // Wikipedia Button Action
+        JButton wikipediaButton = new JButton("Open Wikipedia Article");
+        wikipediaButton.addActionListener(e -> {
+            int selectedRow = table.getSelectedRow();
+            if (selectedRow >= 0) {
+                String species = table.getValueAt(selectedRow, 1).toString(); // Spalte für 'Species'
+                String articleUrl = wikipediaService.getWikipediaArticle(species);
+        
+                if (articleUrl != null) {
+                    try {
+                        java.awt.Desktop.getDesktop().browse(new java.net.URI(articleUrl));
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(this, "Could not open Wikipedia article.", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "No Wikipedia article found for: " + species, "Not Found", JOptionPane.INFORMATION_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Please select a marine animal first.", "Warning", JOptionPane.WARNING_MESSAGE);
+            }
         });
 
         return formPanel;
