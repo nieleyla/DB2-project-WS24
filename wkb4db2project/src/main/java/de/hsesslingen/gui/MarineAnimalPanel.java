@@ -19,11 +19,12 @@ import javax.swing.table.DefaultTableModel;
 
 import de.hsesslingen.model.MarineAnimal;
 import de.hsesslingen.service.MarineAnimalService;
-import de.hsesslingen.service.WikipediaService;
+import de.hsesslingen.service.WikipediaPreviewService;
 
 public class MarineAnimalPanel extends JPanel {
+
     private final MarineAnimalService marineAnimalService = new MarineAnimalService();
-    private final WikipediaService wikipediaService = new WikipediaService();
+    private final WikipediaPreviewService wikipediaPreviewService = new WikipediaPreviewService();
     private final JTable table;
     private final DefaultTableModel tableModel;
 
@@ -40,13 +41,13 @@ public class MarineAnimalPanel extends JPanel {
         JScrollPane tableScrollPane = new JScrollPane(table); // Add scroll bar
         tablePanel.add(tableScrollPane, BorderLayout.CENTER);
 
-        // Wikipedia button
+        // Wikipedia Preview button
         JButton wikipediaButton = new JButton("Open Wikipedia Article");
         wikipediaButton.addActionListener(e -> {
             int selectedRow = table.getSelectedRow();
             if (selectedRow >= 0) {
                 String species = table.getValueAt(selectedRow, 1).toString(); // Spalte für 'Species'
-                String articleUrl = wikipediaService.getWikipediaArticle(species);
+                String articleUrl = wikipediaPreviewService.getWikipediaArticle(species);
 
                 if (articleUrl != null) {
                     try {
@@ -63,9 +64,17 @@ public class MarineAnimalPanel extends JPanel {
             }
         });
 
+        // Wikipedia Import button
+        JButton previewImportButton = new JButton("Preview & Import from Wikipedia");
+        previewImportButton.addActionListener(e -> {
+            marineAnimalService.importToDatabaseFromWikipediaWithPreview();
+            loadMarineAnimals(); // Tabelle aktualisieren
+        });
+
         // Button panel below the table
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         buttonPanel.add(wikipediaButton);
+        buttonPanel.add(previewImportButton);
         tablePanel.add(buttonPanel, BorderLayout.SOUTH);
 
         // Load data
@@ -95,10 +104,10 @@ public class MarineAnimalPanel extends JPanel {
         searchButton.addActionListener(e -> {
             String searchTerm = searchField.getText().toLowerCase();
             List<MarineAnimal> filteredAnimals = marineAnimalService.getAllMarineAnimals().stream()
-                .filter(animal -> animal.getSpecies().toLowerCase().contains(searchTerm) ||
-                                 animal.getHabitat().toLowerCase().contains(searchTerm) ||
-                                 animal.getConservationStatus().toLowerCase().contains(searchTerm))
-                .toList();
+                    .filter(animal -> animal.getSpecies().toLowerCase().contains(searchTerm)
+                    || animal.getHabitat().toLowerCase().contains(searchTerm)
+                    || animal.getConservationStatus().toLowerCase().contains(searchTerm))
+                    .toList();
 
             tableModel.setRowCount(0);
             for (MarineAnimal animal : filteredAnimals) {
@@ -122,7 +131,7 @@ public class MarineAnimalPanel extends JPanel {
     // Form panel
     private JPanel createFormPanel() {
         JPanel formPanel = new JPanel(new GridBagLayout());
-        formPanel.setBorder(new TitledBorder("Add / Edit / Delete Marine Animal"));
+        formPanel.setBorder(new TitledBorder("Add / Edit / Delete Marine Animal(s)"));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -142,7 +151,7 @@ public class MarineAnimalPanel extends JPanel {
         // Buttons
         JButton addButton = new JButton("Add Marine Animal");
         JButton updateButton = new JButton("Update Marine Animal");
-        JButton deleteButton = new JButton("Delete Marine Animal");
+        JButton deleteButton = new JButton("Delete Marine Animal(s) (ID or Range)");
 
         // Add components to form
         gbc.gridx = 0;
@@ -239,19 +248,63 @@ public class MarineAnimalPanel extends JPanel {
 
         // Delete Button Action
         deleteButton.addActionListener(e -> {
-            int id;
-            try {
-                id = Integer.parseInt(idField.getText());
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(this, "ID must be a number!", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
+            String idText = idField.getText();
+            if (idText.contains("-")) {
+                String[] range = idText.split("-");
+                if (range.length != 2) {
+                    JOptionPane.showMessageDialog(this, "Invalid range format! Use 'start-end'.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                int startId, endId;
+                try {
+                    startId = Integer.parseInt(range[0]);
+                    endId = Integer.parseInt(range[1]);
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(this, "IDs must be numbers or a range like x-y!", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                StringBuilder deletedIds = new StringBuilder();
+                StringBuilder failedIds = new StringBuilder();
+
+                for (int id = startId; id <= endId; id++) {
+                    try {
+                        marineAnimalService.deleteMarineAnimal(id);
+                        deletedIds.append(id).append(" ");
+                    } catch (Exception ex) {
+                        failedIds.append(id).append(" ");
+                    }
+                }
+
+                loadMarineAnimals();
+
+                idField.setText("");
+
+                if (failedIds.length() > 0) {
+                    String message = "\nFailed to delete IDs: " + failedIds.toString().trim();
+                    JOptionPane.showMessageDialog(this, message, "Deletion Result", JOptionPane.INFORMATION_MESSAGE);
+                }
+
+            } else {
+                int id;
+                try {
+                    id = Integer.parseInt(idText);
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(this, "ID must be a number!", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                try {
+                    marineAnimalService.deleteMarineAnimal(id);
+                    JOptionPane.showMessageDialog(this, "Deleted ID: " + id, "Deletion Result", JOptionPane.INFORMATION_MESSAGE);
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(this, "Failed to delete ID: " + id, "Error", JOptionPane.ERROR_MESSAGE);
+                }
+
+                loadMarineAnimals();
+
+                idField.setText("");
             }
-
-            marineAnimalService.deleteMarineAnimal(id);
-
-            loadMarineAnimals();
-
-            idField.setText("");
         });
 
         // Wikipedia Button Action
@@ -260,8 +313,8 @@ public class MarineAnimalPanel extends JPanel {
             int selectedRow = table.getSelectedRow();
             if (selectedRow >= 0) {
                 String species = table.getValueAt(selectedRow, 1).toString(); // Spalte für 'Species'
-                String articleUrl = wikipediaService.getWikipediaArticle(species);
-        
+                String articleUrl = wikipediaPreviewService.getWikipediaArticle(species);
+
                 if (articleUrl != null) {
                     try {
                         java.awt.Desktop.getDesktop().browse(new java.net.URI(articleUrl));

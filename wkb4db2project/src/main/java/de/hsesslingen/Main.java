@@ -8,6 +8,7 @@ import de.hsesslingen.gui.MainGUI;
 import de.hsesslingen.service.MarineAnimalService;
 
 public class Main {
+
     public static void main(String[] args) {
         System.out.println("[INFO] Starting Marine Life Database Manager...");
         System.out.println("[INFO] Current time: " + LocalDateTime.now());
@@ -51,13 +52,16 @@ public class Main {
                     System.out.println("Available commands:");
                     System.out.println(" - list: List all marine animals");
                     System.out.println(" - add: Add a new marine animal");
+                    System.out.println(" - import: Import marine animals from Wikipedia");
+                    System.out.println(" - delete: Delete marine animal(s)");
+                    System.out.println(" - help: Display this help message");
                     System.out.println(" - exit: Exit the console mode");
                     break;
 
                 case "list":
                     System.out.println("[INFO] Listing all marine animals:");
-                    animalService.getAllMarineAnimals().forEach(animal ->
-                            System.out.println(animal.getId() + ": " + animal.getSpecies() + " in " + animal.getHabitat())
+                    animalService.getAllMarineAnimals().forEach(animal
+                            -> System.out.println(animal.getId() + ": " + animal.getSpecies() + " in " + animal.getHabitat())
                     );
                     break;
 
@@ -79,6 +83,35 @@ public class Main {
                         System.out.println("[INFO] Marine animal added successfully!");
                     } catch (Exception e) {
                         System.err.println("[ERROR] Failed to add marine animal. Please check your input.");
+                    }
+                    break;
+
+                case "import":
+                    System.out.println("[INFO] Importing marine animals from Wikipedia...");
+                    animalService.importToDatabaseFromWikipedia();
+                    break;
+
+                case "delete":
+                    try {
+                        System.out.print("Enter ID of the marine animal or ID range (x-y) to delete: ");
+                        String input = scanner.nextLine();
+                        String[] parts = input.split("-");
+                        if (parts.length == 1) {
+                            int id = Integer.parseInt(parts[0]);
+                            animalService.deleteMarineAnimal(id);
+                            System.out.println("[INFO] Marine animal deleted successfully!");
+                        } else if (parts.length == 2) {
+                            int start = Integer.parseInt(parts[0]);
+                            int end = Integer.parseInt(parts[1]);
+                            for (int i = start; i <= end; i++) {
+                                animalService.deleteMarineAnimal(i);
+                            }
+                            System.out.println("[INFO] Marine animals deleted successfully!");
+                        } else {
+                            System.err.println("[ERROR] Invalid input. Please enter a single ID or a range.");
+                        }
+                    } catch (Exception e) {
+                        System.err.println("[ERROR] Failed to delete marine animal(s). Please check your input.");
                     }
                     break;
 

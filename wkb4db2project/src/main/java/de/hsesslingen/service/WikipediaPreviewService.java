@@ -7,7 +7,8 @@ import java.net.URL;
 
 import org.json.JSONObject;
 
-public class WikipediaService {
+public class WikipediaPreviewService {
+
     private static final String API_URL = "https://en.wikipedia.org/w/api.php?action=query&format=json&prop=info&inprop=url&titles=";
 
     public String getWikipediaArticle(String speciesName) {

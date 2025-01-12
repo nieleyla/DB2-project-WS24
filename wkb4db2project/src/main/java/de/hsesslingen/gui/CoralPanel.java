@@ -19,11 +19,12 @@ import javax.swing.table.DefaultTableModel;
 
 import de.hsesslingen.model.Coral;
 import de.hsesslingen.service.CoralService;
-import de.hsesslingen.service.WikipediaService;
+import de.hsesslingen.service.WikipediaPreviewService;
 
 public class CoralPanel extends JPanel {
+
     private final CoralService coralService = new CoralService();
-    private final WikipediaService wikipediaService = new WikipediaService();
+    private final WikipediaPreviewService wikipediaPreviewService = new WikipediaPreviewService();
     private final JTable table;
     private final DefaultTableModel tableModel;
 
@@ -46,7 +47,7 @@ public class CoralPanel extends JPanel {
             int selectedRow = table.getSelectedRow();
             if (selectedRow >= 0) {
                 String name = table.getValueAt(selectedRow, 1).toString(); // Spalte für 'Name'
-                String articleUrl = wikipediaService.getWikipediaArticle(name);
+                String articleUrl = wikipediaPreviewService.getWikipediaArticle(name);
 
                 if (articleUrl != null) {
                     try {
@@ -95,10 +96,10 @@ public class CoralPanel extends JPanel {
             String searchTerm = searchField.getText().toLowerCase(); // Case insensitive search
             // Filter corals based on search term
             List<Coral> filteredCorals = coralService.getAllCorals().stream()
-                .filter(coral -> coral.getName().toLowerCase().contains(searchTerm) ||
-                                 coral.getRegion().toLowerCase().contains(searchTerm) ||
-                                 coral.getRecoveryStatus().toLowerCase().contains(searchTerm))
-                .toList();
+                    .filter(coral -> coral.getName().toLowerCase().contains(searchTerm)
+                    || coral.getRegion().toLowerCase().contains(searchTerm)
+                    || coral.getRecoveryStatus().toLowerCase().contains(searchTerm))
+                    .toList();
 
             // Update table
             tableModel.setRowCount(0);

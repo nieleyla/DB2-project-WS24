@@ -6,6 +6,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 public class MainGUI extends JFrame {
+
     public MainGUI() {
         setTitle("Marine Database Manager");
         setSize(1000, 700);
