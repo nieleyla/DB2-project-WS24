@@ -18,9 +18,7 @@ public class CoralDAO {
         List<Coral> corals = new ArrayList<>();
         String query = "SELECT * FROM dbo.leniit01_Corals";
 
-        try (Connection connection = DatabaseConnection.getConnection();
-             Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery(query)) {
+        try (Connection connection = DatabaseConnection.getConnection(); Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(query)) {
             while (rs.next()) {
                 corals.add(new Coral(
                         rs.getInt("ID"),
@@ -40,8 +38,7 @@ public class CoralDAO {
     public void addCoral(String name, String region, String recoveryStatus) {
         String query = "INSERT INTO dbo.leniit01_Corals (Name, Region, RecoveryStatus) VALUES (?, ?, ?)";
 
-        try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = connection.prepareStatement(query)) {
+        try (Connection connection = DatabaseConnection.getConnection(); PreparedStatement pstmt = connection.prepareStatement(query)) {
             pstmt.setString(1, name);
             pstmt.setString(2, region);
             pstmt.setString(3, recoveryStatus);
@@ -55,8 +52,7 @@ public class CoralDAO {
     public void updateCoral(int id, String name, String region, String recoveryStatus) {
         String query = "UPDATE dbo.leniit01_Corals SET Name = ?, Region = ?, RecoveryStatus = ? WHERE ID = ?";
 
-        try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = connection.prepareStatement(query)) {
+        try (Connection connection = DatabaseConnection.getConnection(); PreparedStatement pstmt = connection.prepareStatement(query)) {
             pstmt.setString(1, name);
             pstmt.setString(2, region);
             pstmt.setString(3, recoveryStatus);
@@ -71,8 +67,7 @@ public class CoralDAO {
     public void deleteCoral(int id) {
         String query = "DELETE FROM dbo.leniit01_Corals WHERE ID = ?";
 
-        try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = connection.prepareStatement(query)) {
+        try (Connection connection = DatabaseConnection.getConnection(); PreparedStatement pstmt = connection.prepareStatement(query)) {
             pstmt.setInt(1, id);
             pstmt.executeUpdate();
         } catch (SQLException e) {
@@ -80,4 +75,3 @@ public class CoralDAO {
         }
     }
 }
-

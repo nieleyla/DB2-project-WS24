@@ -18,45 +18,42 @@ public class MarineAnimalDAO {
         List<MarineAnimal> marineAnimals = new ArrayList<>();
         String query = "SELECT * FROM dbo.leniit01_MarineAnimals";
 
-        try (Connection connection = DatabaseConnection.getConnection();
-            Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery(query)) {
+        try (Connection connection = DatabaseConnection.getConnection(); Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(query)) {
             while (rs.next()) {
                 marineAnimals.add(new MarineAnimal(
-                    rs.getInt("ID"),
-                    rs.getString("Species"),
-                    rs.getString("Habitat"),
-                    rs.getInt("Size"),
-                    rs.getString("ConservationStatus")
-                 ));
-        }
+                        rs.getInt("ID"),
+                        rs.getString("Species"),
+                        rs.getString("Habitat"),
+                        rs.getInt("Size"),
+                        rs.getString("ConservationStatus")
+                ));
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return marineAnimals;
     }
 
-   // Add a new MarineAnimal
-   public void addMarineAnimal(String species, String habitat, int size, String conservationStatus) {
-    String query = "INSERT INTO dbo.leniit01_MarineAnimals (Species, Habitat, Size, ConservationStatus) VALUES (?, ?, ?, ?)";
+    // Add a new MarineAnimal
+    public void addMarineAnimal(String species, String habitat, int size, String conservationStatus) {
+        String query = "INSERT INTO dbo.leniit01_MarineAnimals (Species, Habitat, Size, ConservationStatus) VALUES (?, ?, ?, ?)";
 
-    try (Connection connection = DatabaseConnection.getConnection();
-         PreparedStatement pstmt = connection.prepareStatement(query)) {
-        pstmt.setString(1, species); // Insert species into Species column
-        pstmt.setString(2, habitat); // Insert habitat into Habitat column
-        pstmt.setInt(3, size); // Insert size into Size column
-        pstmt.setString(4, conservationStatus); // Insert conservationStatus into ConservationStatus column
-        pstmt.executeUpdate();
-    } catch (SQLException e) {
-        e.printStackTrace();}
+        try (Connection connection = DatabaseConnection.getConnection(); PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setString(1, species); // Insert species into Species column
+            pstmt.setString(2, habitat); // Insert habitat into Habitat column
+            pstmt.setInt(3, size); // Insert size into Size column
+            pstmt.setString(4, conservationStatus); // Insert conservationStatus into ConservationStatus column
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     // Update a MarineAnimal
     public void updateMarineAnimal(int id, String species, String habitat, int size, String conservationStatus) {
         String query = "UPDATE dbo.leniit01_MarineAnimals SET Species = ?, Habitat = ?, Size = ?, ConservationStatus = ? WHERE ID = ?";
-    
-        try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = connection.prepareStatement(query)) {
+
+        try (Connection connection = DatabaseConnection.getConnection(); PreparedStatement pstmt = connection.prepareStatement(query)) {
             pstmt.setString(1, species);
             pstmt.setString(2, habitat);
             pstmt.setInt(3, size);
@@ -67,17 +64,16 @@ public class MarineAnimalDAO {
             e.printStackTrace();
         }
     }
-    
+
     // Delete a MarineAnimal
     public void deleteMarineAnimal(int id) {
         String query = "DELETE FROM dbo.leniit01_MarineAnimals WHERE ID = ?";
-    
-        try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = connection.prepareStatement(query)) {
+
+        try (Connection connection = DatabaseConnection.getConnection(); PreparedStatement pstmt = connection.prepareStatement(query)) {
             pstmt.setInt(1, id);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }    
+    }
 }

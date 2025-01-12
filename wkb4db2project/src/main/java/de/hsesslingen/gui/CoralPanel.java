@@ -37,8 +37,8 @@ public class CoralPanel extends JPanel {
         String[] columns = {"ID", "Name", "Region", "Recovery Status"};
         tableModel = new DefaultTableModel(columns, 0);
         table = new JTable(tableModel);
-        table.setAutoCreateRowSorter(true); // Enable sorting
-        JScrollPane tableScrollPane = new JScrollPane(table); // Add scroll bar
+        table.setAutoCreateRowSorter(true);
+        JScrollPane tableScrollPane = new JScrollPane(table);
         tablePanel.add(tableScrollPane, BorderLayout.CENTER);
 
         // Wikipedia button
@@ -46,7 +46,7 @@ public class CoralPanel extends JPanel {
         wikipediaButton.addActionListener(e -> {
             int selectedRow = table.getSelectedRow();
             if (selectedRow >= 0) {
-                String name = table.getValueAt(selectedRow, 1).toString(); // Spalte für 'Name'
+                String name = table.getValueAt(selectedRow, 1).toString();
                 String articleUrl = wikipediaPreviewService.getWikipediaArticle(name);
 
                 if (articleUrl != null) {
@@ -84,7 +84,7 @@ public class CoralPanel extends JPanel {
 
     // Search panel
     private JPanel createSearchPanel() {
-        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); // Layout: Left align
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         searchPanel.setBorder(new TitledBorder("Search Corals"));
 
         JLabel searchLabel = new JLabel("Search:");
@@ -93,7 +93,7 @@ public class CoralPanel extends JPanel {
 
         // Search button action
         searchButton.addActionListener(e -> {
-            String searchTerm = searchField.getText().toLowerCase(); // Case insensitive search
+            String searchTerm = searchField.getText().toLowerCase();
             // Filter corals based on search term
             List<Coral> filteredCorals = coralService.getAllCorals().stream()
                     .filter(coral -> coral.getName().toLowerCase().contains(searchTerm)
@@ -122,10 +122,10 @@ public class CoralPanel extends JPanel {
 
     // Form panel
     private JPanel createFormPanel() {
-        JPanel formPanel = new JPanel(new GridBagLayout()); // Layout: Grid
+        JPanel formPanel = new JPanel(new GridBagLayout());
         formPanel.setBorder(new TitledBorder("Manage Corals"));
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5); // Padding
+        gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         // Form fields

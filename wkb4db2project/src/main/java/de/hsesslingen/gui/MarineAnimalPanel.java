@@ -37,8 +37,8 @@ public class MarineAnimalPanel extends JPanel {
         String[] columns = {"ID", "Species", "Habitat", "Size", "Conservation Status"};
         tableModel = new DefaultTableModel(columns, 0);
         table = new JTable(tableModel);
-        table.setAutoCreateRowSorter(true); // Enable sorting
-        JScrollPane tableScrollPane = new JScrollPane(table); // Add scroll bar
+        table.setAutoCreateRowSorter(true);
+        JScrollPane tableScrollPane = new JScrollPane(table);
         tablePanel.add(tableScrollPane, BorderLayout.CENTER);
 
         // Wikipedia Preview button
@@ -46,7 +46,7 @@ public class MarineAnimalPanel extends JPanel {
         wikipediaButton.addActionListener(e -> {
             int selectedRow = table.getSelectedRow();
             if (selectedRow >= 0) {
-                String species = table.getValueAt(selectedRow, 1).toString(); // Spalte für 'Species'
+                String species = table.getValueAt(selectedRow, 1).toString();
                 String articleUrl = wikipediaPreviewService.getWikipediaArticle(species);
 
                 if (articleUrl != null) {
@@ -312,7 +312,7 @@ public class MarineAnimalPanel extends JPanel {
         wikipediaButton.addActionListener(e -> {
             int selectedRow = table.getSelectedRow();
             if (selectedRow >= 0) {
-                String species = table.getValueAt(selectedRow, 1).toString(); // Spalte für 'Species'
+                String species = table.getValueAt(selectedRow, 1).toString();
                 String articleUrl = wikipediaPreviewService.getWikipediaArticle(species);
 
                 if (articleUrl != null) {
