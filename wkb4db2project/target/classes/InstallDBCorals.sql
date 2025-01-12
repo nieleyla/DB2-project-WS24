@@ -1,4 +1,4 @@
--- Creating MarineAnimals table
+-- Creating Corals table
 DROP TABLE IF EXISTS dbo.leniit01_Corals;
 GO
 

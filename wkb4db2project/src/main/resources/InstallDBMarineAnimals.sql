@@ -58,6 +58,6 @@ CREATE FUNCTION dbo.leniit01_CalculateRecordAge(@CreatedDate DATETIME)
 RETURNS INT
 AS
 BEGIN
-    RETURN DATEDIFF(YEAR, @CreatedDate, GETDATE());
+    RETURN DATEDIFF(DAY, @CreatedDate, GETDATE());
 END;
 GO
